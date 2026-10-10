@@ -1,0 +1,24 @@
+# Whitelist: ignore everything, then include only this project's own source and notes.
+# The game archive (*.obb), the decompilation (saga-main/), the cloned guides and anything
+# extracted from the game (work/) can therefore never be committed by accident.
+*
+
+!.gitignore
+!Cargo.toml
+!Cargo.lock
+!README.md
+!AGENTS.md
+!MODLOG.md
+!STATUS.md
+!lego-star-wars-formats.md
+
+!docs/
+!docs/**/*.md
+
+!crates/
+!crates/*/
+!crates/*/Cargo.toml
+!crates/*/src/
+!crates/*/src/**/
+!crates/*/src/**/*.rs
+!crates/*/src/**/*.wgsl

@@ -1,0 +1,10 @@
+﻿[package]
+name = "lsw"
+version = "0.1.0"
+edition = "2021"
+description = "LEGO Star Wars: The Complete Saga character engine rebuilt on Bevy, reading the player's own game data"
+
+[dependencies]
+bevy = { version = "0.20", features = ["wav"] }
+tt_formats = { path = "../tt_formats" }
+lsw_sim = { path = "../lsw_sim" }

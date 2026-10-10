@@ -1,0 +1,8 @@
+[package]
+name = "lsw_sim"
+version = "0.1.0"
+edition = "2021"
+description = "Engine-independent character, animation and camera rules, rebuilt from the game's observed behaviour"
+
+[dependencies]
+tt_formats = { path = "../tt_formats" }

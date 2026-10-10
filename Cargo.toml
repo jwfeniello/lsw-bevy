@@ -1,0 +1,10 @@
+﻿[workspace]
+resolver = "2"
+members = ["crates/tt_formats", "crates/lsw_sim", "crates/lsw"]
+
+# Game code stays debuggable, dependencies (Bevy) are optimised so the dev build runs at full speed.
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 3

@@ -1,0 +1,7 @@
+[package]
+name = "tt_formats"
+version = "0.1.0"
+edition = "2021"
+description = "Readers for the TT Games data formats used by LEGO Star Wars: The Complete Saga (Android)"
+
+[dependencies]
