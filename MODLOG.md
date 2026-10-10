@@ -300,3 +300,10 @@ The project owner supplied two screenshots of the real game in the first room.
 - Not tested: by hand in the window; the `--lego` level (no rail set there was checked for
   `cam_height_above_terrain`, and the arrow there is untried); the arrow's pulse by eye.
 - Estimates are listed in `docs/DESIGN.md` under Camera.
+
+## 2026-10-10 - README brought up to date on enemies
+
+- The README still said "No enemies" and "hearts never empty", gave 9 tests, and called the
+  test-area camera a chase camera. Corrected: enemies and bolts are now in the summary and
+  under "What works", with their limits under "What is approximate or missing".
+- Notes only; no code changed.

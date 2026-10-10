@@ -1,9 +1,12 @@
 # LEGO Star Wars character engine on Bevy
 
 A from-scratch Rust/Bevy rebuild of the core character engine of *LEGO Star Wars: The Complete
-Saga*: Qui-Gon Jinn walking, jumping and fighting with his lightsaber inside the first level
-(the Negotiations meeting room), followed along the level's own camera rails. It reads the models, textures, animations, sounds and character settings from **your own
-copy** of the Android game data at run time. No game files are in this repository.
+Saga*: Qui-Gon Jinn walking, jumping and fighting with his lightsaber, with battle droids that
+shoot at him and blaster bolts he can block back at them. It runs in a built-in test area, in
+the game's first level (the Negotiations meeting room, followed along the level's own camera
+rails), or in any `.obj` model. It reads the models, textures, animations, sounds and
+character settings from **your own copy** of the Android game data at run time. No game files
+are in this repository.
 
 Unofficial fan project, not affiliated with or endorsed by the game's owners. Experimental.
 
@@ -32,7 +35,7 @@ opposite way and jump straight away for a backflip; jump just after a swing for 
 Other commands:
 
 ```
-cargo run -p lsw               # the built-in test area (ramps, stairs, platforms, gaps)
+cargo run -p lsw               # the built-in test area (ramps, stairs, platforms, gaps, battle droids)
 cargo run -p lsw -- --lego     # the game's first level (the Negotiations meeting room)
 cargo run -p lsw -- --flat     # a bare flat floor
 cargo run -p lsw -- --level=levels\episode_i\negotiations\negotiations_b   # another level folder (not tested)
@@ -47,7 +50,7 @@ every event.
 ## The test area
 
 With no option the game starts in a test area built in code (this project's own, nothing from
-the game), at the character's real speeds, with a chase camera:
+the game), at the character's real speeds:
 
 - **Ahead:** six ramps at 10, 20, 30, 40, 50 and 60 degrees, each 1.5 high with a landing.
 - **Behind:** three staircases with steps 0.05, 0.10 and 0.15 high.
@@ -108,10 +111,19 @@ cargo run -p lsw -- "--obj=<file.obj>" --obj-scale=0.05
 - Model files stay on your machine: keep them under `work\` (ignored by git). A model ripped
   from another game is that game's copyrighted art; do not publish it or commit it.
 
-## What works (tested on Windows 10, Bevy 0.20, 2026-10-09)
+## What works (tested on Windows 10, Bevy 0.20, 2026-10-10)
 
-Checked by the scripted demo (screenshots + log) and by `cargo test -p lsw_sim` (9 tests):
+Checked by the scripted demo (screenshots + log) and by `cargo test -p lsw_sim` (14 tests):
 
+- **Enemies and blaster bolts (test area only)**: five battle droids, loaded from the game
+  data, turn to face you and shoot. Bolts use the game's numbers (4 units a second, 2 second
+  life, 1 heart of damage). A hit costs a heart and knocks you back; a block timed as the bolt
+  arrives sends it straight back and destroys the droid it hits; holding attack scatters
+  bolts instead; a saber swing destroys a droid in reach, and it falls apart into its own
+  pieces. The hearts on the HUD follow your health. The bolt and block rules are from the
+  game; when a droid decides to shoot, how far it sees and the saber's reach are this
+  project's stand-ins. Blocking by hand in the window was **not tested** (the tests and the
+  demo do it by script).
 - **The first level, `negotiations_a`**: its scenery (2,154 placed meshes with their textures
   and baked vertex-colour lighting), its collision (5,090 triangles plus 358 wall-line
   segments), its start point and its 15 camera rails with their height setting.
@@ -165,7 +177,7 @@ Checked by the scripted demo (screenshots + log) and by `cargo test -p lsw_sim` 
   game's stored motion is not decoded, and the moved bricks can hang in the camera's view).
 - **Everything else collidable is fixed.** Sliding doors, lifts and the other Force objects do
   not work yet, so the corridor's side doors stay shut. No pickups, switches, build-its,
-  enemies or level scripts.
+  or level scripts.
 - **Every placed mesh is drawn**, including a few that the game hides or swaps (a purple marker
   cube is visible in a doorway; lower-detail copies may overlap).
 - **Seen in the comparison and only partly fixed**: glossy materials (the meeting table) carry
@@ -181,8 +193,10 @@ Checked by the scripted demo (screenshots + log) and by `cargo test -p lsw_sim` 
   shades per pixel on this platform was not checked. The 0x7F = full brightness scale for
   baked colours is read from the data, not confirmed against the game's shader.
 - Only `negotiations_a` has been loaded. Other levels are **not tested**.
-- **No enemies**, so blocking, the swipe-behind move, targeting and damage are not built. Hit
-  frames are detected and logged but hit nothing.
+- **Enemies are in the test area only**, placed by hand. The game places and drives its
+  enemies from level scripts that are not implemented, so the LEGO level has none. Droids
+  stand still: no walking, no melee. There are no hurt or death clips for the player (at no
+  hearts you are simply restored), and the swipe-behind move and targeting are not built.
 - Idle variations, head turning and cloak/hair physics are missing.
 - Three movement details are still unconfirmed: the lunge's rise (the file's `lunge_jumpspeed`
   is not handled by the reference code), whether steering is cut during the fall clip, and the
@@ -191,11 +205,11 @@ Checked by the scripted demo (screenshots + log) and by `cargo test -p lsw_sim` 
   small image can show (the 2005 game's HUD is larger; that is a version difference). The
   stud icon spins through the game's 32 frames, at an assumed 30 frames a second. The stud
   count's size on screen is an estimate, it always reads 0 (there are no studs to collect),
-  hearts never empty (nothing hurts you), the heart spacing may be slightly wide, and the
+  lost hearts disappear instead of being drawn faded, the heart spacing may be slightly wide, and the
   layout assumes a 16:9 window. No pause menu, hints,
   second-player side or True Jedi bar.
 - Not built: normal maps, face animation (`.bsa`), blade motion trail, footstep and jump
-  sounds, Force powers.
+  sounds, Force powers other than opening the first room's door.
 - Gamepad input compiles but is **not tested**. Only Qui-Gon has been loaded.
 - The blade glow is tuned by eye, not matched to the game.
 
@@ -203,7 +217,7 @@ Checked by the scripted demo (screenshots + log) and by `cargo test -p lsw_sim` 
 
 - `crates/tt_formats` - readers for the archive, models (`.ghg`), textures (`.atitc`),
   animations (`.an3`) and character files, plus the `ttdump` inspector.
-- `crates/lsw_sim` - the rules (character controller, clips, camera) with no renderer, and
+- `crates/lsw_sim` - the rules (character controller, clips, camera, combat) with no renderer, and
   their tests.
 - `crates/lsw` - the Bevy app.
 - `docs/DESIGN.md` - how it works and where each rule came from.
